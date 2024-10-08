@@ -64,17 +64,23 @@ pub async fn list(pool: web::Data<DbPool>) -> HttpResponse {
 }
 
 #[post("/add")]
-pub async fn add_note(pool: web::Data<DbPool>, note: web::Json<Note>) -> HttpResponse {
+pub async fn add_note(pool: web::Data<DbPool>, note: web::Json<NewNote>) -> HttpResponse {
     let mut conn = pool.get().expect("Failed to get connection");
     use crate::schema::notes::dsl::*;
 
-    let new_note = note.into_inner(); // Use this if you want to consume the Json
-
+    // Create a new note instance, id set to 0 for auto-increment
+    let new_note = Note {
+        id: 0, // This lets the database handle ID assignment
+        directory: note.directory.clone(),
+        name: note.name.clone(),
+        content: note.content.clone(),
+    };
+    println!("Inserting note: {:?}", new_note.id.to_string());
     match diesel::insert_into(notes)
-        .values(&new_note) // Ensure that new_note matches the Insertable trait requirements
-        .execute(&mut conn)
+        .values(&new_note)
+        .execute(&mut conn) // Execute the insertion
     {
-        Ok(_) => HttpResponse::Created().finish(), // Return 201 for created
+        Ok(_) => HttpResponse::Created().finish(),
         Err(err) => {
             eprintln!("Error inserting note: {}", err);
             HttpResponse::InternalServerError().finish()
