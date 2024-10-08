@@ -1,21 +1,21 @@
 use actix_web::*;
+mod db;
 mod note;
+mod schema;
 
+use db::create_pool;
 use diesel::*;
+use note::*;
 
 #[actix_web::main]
 async fn main() {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
-    let manager = r2d2::ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool");
+    let pool = db::create_pool(&database_url);
     HttpServer::new(move || {
         App::new()
-            .data(pool.clone())
-            // enable logger - always register actix-web Logger middleware last
-            // register HTTP requests handlers
+            .app_data(web::Data::new(pool.clone()))
             .service(note::list)
+            .service(add_note)
     })
     .bind("0.0.0.0:9090")
     .expect("REASON")

@@ -419,6 +419,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "db"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc4aa825ee87663c207731755e0706866820165d32ccad8e94ec748434ddae5a"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -800,8 +806,11 @@ name = "note"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "db",
  "diesel",
  "dotenvy",
+ "serde",
+ "serde_json",
  "uuid",
 ]
 
