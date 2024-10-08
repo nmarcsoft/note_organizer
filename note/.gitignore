@@ -1,0 +1,6 @@
+credentials.json
+build/
+target/
+vscode/
+migrations/
+.env
