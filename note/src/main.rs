@@ -6,9 +6,13 @@ use diesel::*;
 #[actix_web::main]
 async fn main() {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
-    //let manager = r2d2::ConnectionManager::<PgConnection>::new(database_url);
-    HttpServer::new(|| {
+    let manager = r2d2::ConnectionManager::<PgConnection>::new(database_url);
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool");
+    HttpServer::new(move || {
         App::new()
+            .data(pool.clone())
             // enable logger - always register actix-web Logger middleware last
             // register HTTP requests handlers
             .service(note::list)
