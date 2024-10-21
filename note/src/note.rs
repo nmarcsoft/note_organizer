@@ -7,13 +7,13 @@ use diesel::*;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use uuid::Uuid;
-
 #[derive(Serialize)]
 struct ApiError {
     message: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Queryable, Insertable, Deserialize)]
+#[table_name = "notes"]
 pub struct NewNote {
     pub directory: Option<String>,
     pub name: Option<String>,
@@ -69,13 +69,11 @@ pub async fn add_note(pool: web::Data<DbPool>, note: web::Json<NewNote>) -> Http
     use crate::schema::notes::dsl::*;
 
     // Create a new note instance, id set to 0 for auto-increment
-    let new_note = Note {
-        id: 0, // This lets the database handle ID assignment
+    let new_note = NewNote {
         directory: note.directory.clone(),
         name: note.name.clone(),
         content: note.content.clone(),
     };
-    println!("Inserting note: {:?}", new_note.id.to_string());
     match diesel::insert_into(notes)
         .values(&new_note)
         .execute(&mut conn) // Execute the insertion

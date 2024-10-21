@@ -21,6 +21,25 @@ function App() {
     reader.readAsText(file);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await ApiService.getRequest('/list');
+        setData(result);
+        console.log(result);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to fetch data');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="App">
       <header className="App-header">
@@ -28,7 +47,19 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
         </div>
         <div className="app-container">
-          <input type="file" accept=".md" onChange={handleFileUpload} />
+          <div className="data-list">
+            {data && data.length > 0 ? (
+              <ul>
+                {data.map((item, index) => (
+                  <li key={index}>
+                    <p>{item.name}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Aucune note disponible</p>
+            )}
+          </div>
           <div className="main-content">
             <ReactMarkdown>{markdownContent}</ReactMarkdown>
           </div>
