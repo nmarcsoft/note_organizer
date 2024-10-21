@@ -4,7 +4,6 @@
 
 .App-logo {
   height: 40vmin;
-  pointer-events: none;
 }
 
 html,
@@ -44,6 +43,7 @@ body {
 .App-logo {
   height: 40px;
   width: 40px;
+  cursor: pointer;
 }
 
 .App-header {
