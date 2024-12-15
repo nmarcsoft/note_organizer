@@ -1,11 +1,11 @@
 # NOTE_ORGANIZER
-## Why
+## Idea
 I wanted to learn Rust and increase my database and server skills.
 So I made this small project.
 
 This project can be significatively improved.
 
-## Requires
+## Requirements
 nodejs (npm)
 cargo
 
